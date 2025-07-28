@@ -21,7 +21,7 @@ const ParallaxBackground = ({ image = '/background.jpg', blur = '2px', speed = 0
         top: 0,
         left: 0,
         width: '100%',
-        height: '200vh', // must be taller than viewport to scroll
+        height: '200vh',
         backgroundImage: `url(${image})`,
         backgroundSize: 'cover',
         backgroundPosition: 'center',

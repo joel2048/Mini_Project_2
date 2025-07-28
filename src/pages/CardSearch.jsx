@@ -1,13 +1,14 @@
 import { useParams, useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import "../index.css";
+import Cards from "../components/cards";
+
 import Container from "@mui/material/Container";
 import Grid from "@mui/material/Grid";
 import Paper from "@mui/material/Paper";
 import Typography from "@mui/material/Typography";
-import '../index.css'
-import { alpha } from "@mui/material";
-
 import {
+  alpha,
   FormGroup,
   FormControlLabel,
   Checkbox,
@@ -16,21 +17,54 @@ import {
   Button,
 } from "@mui/material";
 
-import Cards from "../components/cards";
-
-import useFetch from "../hooks/useFetch";
+import { useQuery } from "@tanstack/react-query";
 
 function CardSearch() {
-  const [page, setPage] = useState(0);
-  const [filters, setFilters] = useState("");
+  //page and filter states
+  const getStoredPage = () => {
+    const stored = localStorage.getItem("page");
+    return stored ? stored : 0;
+  };
 
-  const { data, loading, error } = useFetch(
-    `https://db.ygoprodeck.com/api/v7/cardinfo.php?num=10&offset=${page}${filters}`
-  );
+  const getStoredFilters = () => {
+    const stored = localStorage.getItem("filters");
+    return stored ? stored : "";
+  };
 
+  const [page, setPage] = useState(getStoredPage);
+  const [filters, setFilters] = useState(getStoredFilters);
+
+  //local storage
+  useEffect(() => {
+    localStorage.setItem("page", page);
+  }, [page]);
+
+  useEffect(() => {
+    localStorage.setItem("filters", filters);
+  }, [filters]);
+
+  //fetch query
+  const fetchCards = async (page, filters) => {
+    const response = await fetch(
+      `https://db.ygoprodeck.com/api/v7/cardinfo.php?num=10&offset=${page}${filters}`
+    );
+    if (!response.ok) {
+      throw new Error("Network response was not ok");
+    }
+    return response.json();
+  };
+
+  const { data, isLoading, isError } = useQuery({
+    queryKey: ["cards", page, filters],
+    queryFn: () => fetchCards(page, filters),
+  });
+
+  //page calculation for buttons
   const nextPage = () => setPage((prev) => prev + 10);
   const prevPage = () => setPage((prev) => Math.max(0, prev - 10));
 
+
+  //filter logic
   const applyFilter = () => {
     const filterParts = [];
 
@@ -40,9 +74,9 @@ function CardSearch() {
       }
     });
 
-    const filterString = filterParts.join('');
+    const filterString = filterParts.join("");
 
-    setPage(0)
+    setPage(0);
     setFilters(filterString);
   };
 
@@ -59,7 +93,7 @@ function CardSearch() {
     def: "",
     name: "",
     level: "",
-  })
+  });
 
   const handleFilterStatus = (event) => {
     setFilterStatus({
@@ -88,7 +122,7 @@ function CardSearch() {
               flexDirection: "column",
               alignItems: "center",
               justifyContent: "center",
-              bgcolor: alpha("#adbbebff", 0.8)
+              bgcolor: alpha("#adbbebff", 0.8),
             }}
           >
             <FormControl component="fieldset" variant="standard">
@@ -106,7 +140,10 @@ function CardSearch() {
                 />
                 <input
                   name="atk"
-                  style={{ visibility: filterStatus.atk ? "visible" : "hidden", width: 100 }}
+                  style={{
+                    visibility: filterStatus.atk ? "visible" : "hidden",
+                    width: 100,
+                  }}
                   onChange={handleFilterInput}
                   value={filterValue.atk}
                 />
@@ -122,7 +159,10 @@ function CardSearch() {
                 />
                 <input
                   name="def"
-                  style={{ visibility: filterStatus.def ? "visible" : "hidden", width: 100 }}
+                  style={{
+                    visibility: filterStatus.def ? "visible" : "hidden",
+                    width: 100,
+                  }}
                   onChange={handleFilterInput}
                   value={filterValue.def}
                 />
@@ -138,7 +178,10 @@ function CardSearch() {
                 />
                 <select
                   name="level"
-                  style={{ visibility: filterStatus.level ? "visible" : "hidden", width: 100 }}
+                  style={{
+                    visibility: filterStatus.level ? "visible" : "hidden",
+                    width: 100,
+                  }}
                   onChange={handleFilterInput}
                   value={filterValue.level}
                 >
@@ -155,9 +198,10 @@ function CardSearch() {
                   <option>10</option>
                   <option>11</option>
                   <option>12</option>
-
                 </select>
-                <button className="button" size="small" onClick={applyFilter}>Apply</button>
+                <button className="button" size="small" onClick={applyFilter}>
+                  Apply
+                </button>
               </FormGroup>
             </FormControl>
           </Paper>
@@ -165,14 +209,14 @@ function CardSearch() {
 
         {/* Cards */}
         <Grid item>
-          <Cards cards={data} loading={loading}></Cards>
+          <Cards cards={data} loading={isLoading}></Cards>
           <button className="button" onClick={prevPage} disabled={page === 0}>
             Previous
           </button>
           <button
             className="button"
             onClick={nextPage}
-            disabled={loading || data?.data?.length < 10}
+            disabled={isLoading || data?.data?.length < 10}
           >
             Next
           </button>

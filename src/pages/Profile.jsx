@@ -27,7 +27,7 @@ const Profile = () => {
             component="img"
             src={user.picture}
             alt={user.name}
-            sx={{ mt: 1.5 }} // 1.5 * 8 = 12px
+            sx={{ mt: 1.5 }}
           />
           <h2>{user.name}</h2>
           <p>{user.email}</p>
