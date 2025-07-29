@@ -1,7 +1,3 @@
-sortby and search bar in Cards and Home page
+sortby and name search bar
 make card info page
-block pages if not auth
-use tokens
-pages as props
-
-TANSTACK CACHE!!!!!
+buttons on sticky footer
