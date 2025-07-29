@@ -1,3 +1,4 @@
+handle more errors
 sortby and name search bar
 make card info page
 buttons on sticky footer
