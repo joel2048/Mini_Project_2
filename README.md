@@ -1,11 +1,18 @@
-# React + Vite
+# Exercise for React
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+- Authentication with Auth0
+- Cache with TanStack
+- React Route/Component/Hook/Context Structure
+- MUI
 
-Currently, two official plugins are available:
+### YuGiOh Card Browser App
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+Functions:
+
+- filter card list
+- create account
+- login with account
+(- save card collections) 
 
 ## Expanding the ESLint configuration
 
